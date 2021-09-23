@@ -203,7 +203,7 @@ struct Bot {
 				auto importances = vector<double>();
 				for (const auto& r : game.resource) {
 					const auto& now = agent_end_times[index-1];
-					const auto coef_type = r.type == "A" ? 2.1 : r.type == "B" ? 4.5 : 0.8;
+					const auto coef_type = r.type == "A" ? 2.1 : r.type == "B" ? 4.7 : 0.8;
 					const auto ta = now + f(r.x, r.y, agent.move.back().x, agent.move.back().y);  // 到着時刻
 					if(ta >= r.t1) {
 						importances.push_back(0.0);
@@ -212,7 +212,7 @@ struct Bot {
 					const auto tb = max(r.t0, ta);
 					const auto tws = r.t1 - tb;
 					const auto twh = r.t1 - now;
-					const auto importance = (double)tws / (double)twh * coef_type * r.weight;
+					const auto importance = (double)tws / (double)twh * coef_type * pow((double)r.weight, 0.9);
 					importances.push_back(importance);
 				}
 				const auto important_order = Argsort<double, true>(importances);
