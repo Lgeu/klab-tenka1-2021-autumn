@@ -172,7 +172,8 @@ struct Bot {
 			};
 			// 動かす
 			for (int index : index_list) {
-				const auto& agent = game.agent[index];
+                //cerr << "index=" << index << endl;
+				const auto& agent = game.agent[index-1];
 				if (resource_positions.empty()) break;
 				
 				auto importances = vector<double>();
@@ -197,6 +198,7 @@ struct Bot {
 				const auto y = game.resource[r].y;
 				call_move(index, x, y);
 			}
+            //cerr << "wait 1000" << endl;
 
 			this_thread::sleep_for(chrono::milliseconds(1000));
 		}

@@ -176,7 +176,7 @@ struct Bot {
 				//m.t + 
 
 				*/
-				if(agent_end_times[i] - 1.0 < game.now){
+				if(agent_end_times[i] - 1000 < game.now){
 					index_list.push_back(i+1);
 				}
 			}
@@ -203,7 +203,7 @@ struct Bot {
 				auto importances = vector<double>();
 				for (const auto& r : game.resource) {
 					const auto& now = agent_end_times[index-1];
-					const auto coef_type = r.type == "A" ? 2.0 : r.type == "B" ? 5.0 : 0.5;
+					const auto coef_type = r.type == "A" ? 2.1 : r.type == "B" ? 4.5 : 0.8;
 					const auto ta = now + f(r.x, r.y, agent.move.back().x, agent.move.back().y);  // 到着時刻
 					if(ta >= r.t1) {
 						importances.push_back(0.0);
