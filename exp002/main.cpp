@@ -172,7 +172,7 @@ struct Bot {
 			};
 			// 動かす
 			for (int index : index_list) {
-				const auto& agent = game.agent[index];
+				const auto& agent = game.agent[index-1];
 				if (resource_positions.empty()) break;
 				
 				auto importances = vector<double>();
