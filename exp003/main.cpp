@@ -138,7 +138,7 @@ template<typename T, bool reverse = false> inline auto Argsort(const vector<T>& 
 	return res;
 }
 
-auto agent_positions = array<pair<int, int>, 5>();
+//auto agent_targets = array<int, 5>();
 auto agent_end_times = array<int, 5>();
 
 struct Bot {
@@ -146,6 +146,8 @@ struct Bot {
 	void solve() {
 		for (;;) {
 			game = call_game();
+			
+			for(auto&& a : agent_end_times) a = max(a, game.now);
 
 			// 情報出力
 			for (const auto& o : game.owned_resource) {
@@ -163,12 +165,24 @@ struct Bot {
 
 			vector<int> index_list;  // 1.0 秒以内にそこに資源が無くなるようなエージェントのリスト
 			for(int i=0; i<5; i++){
-				const auto& m = game.agent[i].move.back();
+				auto flag = true;  // なくなる
+				/*
+				for(const auto& resource_ : game.resource){
+					if(resource_.id == agent_targets[i]){
+						if(resource_.t1 - 1.0 < agent_en)
+					}
+				}
+				game.resource[0].id
 				//m.t + 
+
+				*/
+				if(agent_end_times[i] - 1.0 < game.now){
+					index_list.push_back(i+1);
+				}
 			}
 
 
-
+/*
 			for (int i = 0; i < 5; ++ i) {
 				const auto& m = game.agent[i].move.back();
 				if (resource_positions.count({m.x, m.y})) {
@@ -177,6 +191,7 @@ struct Bot {
 					index_list.push_back(i+1);
 				}
 			}
+			*/
 			auto f = [](double x1, double y1, double x2, double y2){
 				return (int)(100.0 * sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)));
 			};
@@ -187,15 +202,16 @@ struct Bot {
 				
 				auto importances = vector<double>();
 				for (const auto& r : game.resource) {
+					const auto& now = agent_end_times[index-1];
 					const auto coef_type = r.type == "A" ? 1.0 : r.type == "B" ? 2.5 : 3.0;
-					const auto ta = game.now + f(r.x, r.y, agent.move.back().x, agent.move.back().y);  // 到着時刻
+					const auto ta = now + f(r.x, r.y, agent.move.back().x, agent.move.back().y);  // 到着時刻
 					if(ta >= r.t1) {
 						importances.push_back(0.0);
 						continue;
 					}
 					const auto tb = max(r.t0, ta);
 					const auto tws = r.t1 - tb;
-					const auto twh = r.t1 - game.now;
+					const auto twh = r.t1 - now;
 					const auto importance = (double)tws / (double)twh * coef_type * r.weight;
 					importances.push_back(importance);
 				}
@@ -206,8 +222,10 @@ struct Bot {
 				int r = important_order[0];
 				const auto x = game.resource[r].x;
 				const auto y = game.resource[r].y;
-				call_move(index, x, y);
-				agent_positions[index-1] = make_pair(x, y);
+				//call_move(index, x, y);
+				call_will_move(index, x, y, agent_end_times[index-1]);
+				
+				//agent_positions[index-1] = make_pair(x, y);
 				agent_end_times[index-1] = game.resource[r].t1;
 			}
 
