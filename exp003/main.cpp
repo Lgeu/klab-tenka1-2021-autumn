@@ -138,6 +138,9 @@ template<typename T, bool reverse = false> inline auto Argsort(const vector<T>& 
 	return res;
 }
 
+auto agent_positions = array<pair<int, int>, 5>();
+auto agent_end_times = array<int, 5>();
+
 struct Bot {
 	Game game;
 	void solve() {
@@ -158,7 +161,14 @@ struct Bot {
 				}
 			}
 
-			vector<int> index_list;  // そこに資源が無いようなエージェントのリスト
+			vector<int> index_list;  // 1.0 秒以内にそこに資源が無くなるようなエージェントのリスト
+			for(int i=0; i<5; i++){
+				const auto& m = game.agent[i].move.back();
+				m.t + 
+			}
+
+
+
 			for (int i = 0; i < 5; ++ i) {
 				const auto& m = game.agent[i].move.back();
 				if (resource_positions.count({m.x, m.y})) {
@@ -186,7 +196,7 @@ struct Bot {
 					const auto tb = max(r.t0, ta);
 					const auto tws = r.t1 - tb;
 					const auto twh = r.t1 - game.now;
-					const auto importance = (double)tws / (double)twh * coef_type;
+					const auto importance = (double)tws / (double)twh * coef_type * r.weight;
 					importances.push_back(importance);
 				}
 				const auto important_order = Argsort<double, true>(importances);
@@ -197,6 +207,8 @@ struct Bot {
 				const auto x = game.resource[r].x;
 				const auto y = game.resource[r].y;
 				call_move(index, x, y);
+				agent_positions[index-1] = make_pair(x, y);
+				agent_end_times[index-1] = game.resource[r].t1;
 			}
 
 			this_thread::sleep_for(chrono::milliseconds(1000));
