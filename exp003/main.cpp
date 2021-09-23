@@ -164,7 +164,7 @@ struct Bot {
 			vector<int> index_list;  // 1.0 秒以内にそこに資源が無くなるようなエージェントのリスト
 			for(int i=0; i<5; i++){
 				const auto& m = game.agent[i].move.back();
-				m.t + 
+				//m.t + 
 			}
 
 
